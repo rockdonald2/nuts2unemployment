@@ -4,14 +4,41 @@
     <head>
         <meta charset="UTF-8">
         <title>NUTS2 Unemployment Visualization</title>
+        <link rel="stylesheet"
+            href="static/css/style.css">
     </head>
 
-    <body>
+    <body class="hidden">
+        <div class="overlay show">
+             <p>Currently fetching data...</p>
+             <p>This vizualization is optimized for min screen pixel-width of 1400px.</p>
+        </div>
 
-        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <div id="chart">
+            <div class="wrapper">
+                <div id="title">
+                    Visualizing the <span>Unemployment rate</span> across Europe, NUTS2 regions
+
+                </div>
+
+                <div id="sliderTime"></div>
+            </div>
+
+            <div id="nuts-map">
+                <div id="map-tooltip">
+                    <h2 id="map-tooltip--header">placeholder</h2>
+                    <p id="map-tooltip--rate"></p>
+                    <div id="map-tooltip--info">placeholder</div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://d3js.org/d3.v4.min.js"></script>
         <script src="https://d3js.org/d3-queue.v3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+        <script src="https://unpkg.com/d3-simple-slider"></script>
         <script src="https://unpkg.com/topojson@3.0.2/dist/topojson.min.js"></script>
-        
+
         <script src="static/js/nviz_map.js"></script>
         <script src="static/js/nviz_core.js"></script>
         <script src="static/js/nviz_main.js"></script>
