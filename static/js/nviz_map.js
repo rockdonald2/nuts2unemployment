@@ -133,7 +133,7 @@
                         ((d.p > average_pop) ? 'high' : 'low') + '</span> in Europe');
                     inf.append('p').attr('id', 'active').html('Active persons: <span class="bold">' + d.a + '</span> thousand');
                     inf.append('p').html('Considered <span class="bold ' + ((d.a > average_act) ? 'high' : 'low') + '">' +
-                        ((d.p > average_pop) ? 'high' : 'low') + '</span> in Europe')
+                        ((d.a > average_act) ? 'high' : 'low') + '</span> in Europe')
                 } else {
                     inf.append('p').text('No data available for population or active persons.')
                 }
