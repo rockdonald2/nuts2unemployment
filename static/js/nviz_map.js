@@ -33,6 +33,31 @@
     const gTime = d3.select('#sliderTime').append('svg').attr('width', 350).attr('height', 100).append('g').attr('transform', 'translate(20, 30)').call(sliderTime)
         .selectAll('text').style('font-size', '1.2rem');
 
+    const makeLegend = function () {
+        const scale = d3.scaleOrdinal().domain([0, 1, 2, 3, 4, 5, 6, 7, 8]).range([0, 29, 58, 87, 116, 144, 173, 202, 231]);
+
+        const legend = svg.append('g').attr('class', 'legend').attr('transform', 'translate(' + (height * 0.85) + ', 100)');
+        const cells = legend.append('g').attr('class', 'cells');
+        const labels = legend.append('g').attr('class', 'labels').attr('transform', 'translate(11, 29)');
+
+        for (let i = 0; i < 8; i++) {
+            cells.append('rect').attr('height', 29).attr('width', 18).attr('x', 18).attr('y', function (d) {
+                return scale(i);
+            }).attr('class', function (d) {
+                return colorScale(i + 3);
+            });
+        }
+
+        for (let i = 0; i < 7; i++) {
+            const tick = labels.append('g').attr('class', 'tick').attr('transform', function (d) {
+                return 'translate(0, ' + (scale(i) + 0.5) + ')';
+            });
+
+            tick.append('line').attr('stroke', '#222').attr('x2', 6).attr('x1', 26);
+            tick.append('text').attr('fill', '#222').attr('dx', '-1.5em').attr('dy', '0.29em').text(i + 3 + '%').style('font-size', '1.1rem');
+        }
+    };
+
     /* az a függvény, amely létrehozza a térképet és fel is tölti adatokkal */
     nviz.initMap = function () {
         /* első dolgunk a dokumentáció szerinti megfelelő magasságot megkapni, ami meghatározza a projection-t */
@@ -64,31 +89,11 @@
                 return "nutsbn" + (bn.properties.co === 'T' ? ' coastal' : '') + ((bn.properties.oth === 'T' || bn.properties.lvl == 0) ? ' grey' : '');
             });
 
-        /* hozzáadjuk a jelmagyarázatot */
-        const legend = d3.legendColor().labelFormat(d3.format('.2f'))
-            .labels(function ({
-                i,
-                genLength,
-                generatedLabels,
-                labelDelimiter
-            }) {
-                if (i === 0) {
-                    const values = generatedLabels[i].split(` ${labelDelimiter} `)
-                    return `Less than ${values[1]}%`
-                } else if (i === genLength - 1) {
-                    const values = generatedLabels[i].split(` ${labelDelimiter} `)
-                    return `${values[0]}% or more`
-                }
+        /* hozzáadjuk az országpatheket */
+        svg.insert('g', '.boundaries').attr('class', 'countries');
 
-                const values = generatedLabels[i].split(` ${labelDelimiter} `);
-                return `${values[0]}% to ${values[1]}%`;
-            })
-            .useClass(true).scale(colorScale);
-        
-        svg.append('g').attr('class', 'legend').attr('transform', 'translate(' + (width / 1.35) + ', 50)').style('font-size', '1.5rem').call(legend)
-            .select('.legendCells').append('g').attr('class', 'cell missingdata').attr('transform', 'translate(0, 180)').append('rect').attr('class', 'swatch')
-            .attr('width', '15').attr('height', '15').attr('fill', 'lightgrey');
-        d3.select('.cell.missingdata').append('text').attr('class', 'label').attr('transform', 'translate(25, 12.5)').text('No data');
+        /* hozzáadjuk a jelmagyarázatot */
+        makeLegend();
     };
 
     nviz.updateMap = function () {
@@ -112,9 +117,6 @@
         const average_act = d3.mean(mapData.map(function (d) {
             return d.a;
         }));
-
-        /* hozzáadjuk az országpatheket */
-        svg.insert('g', '.boundaries').attr('class', 'countries');
 
         const countries = svg.select('.countries').selectAll('.nutsrg').data(mapData, function (d) {
             return d.code;
